@@ -1,0 +1,40 @@
+name: te-deepspeech-0.7.4
+
+#docker_env:
+#  image: te-ds
+#  volumes: ["/home/anas/tarteel_ws/recordings/:/home/anas/tarteel_ws/recordings/"]
+
+entry_points:
+  main:
+    parameters:
+      datadir: { type: string, default: "data/tarteel" }
+      batch_size: { type: float, default: 8 }
+      early_stop: { type: string, default: "true" }
+      epochs: { type: float, default: 8 }
+      plateau_epochs: { type: float, default: 5 }
+      reduce_lr_on_plateau: { type: string, default: true }
+      use_utf8: { type: string, default: true }
+      export_file_name: { type: string, default: output_noaug_utf8_260k }
+    command: "python DeepSpeech.py \
+      --train_files {datadir}/train.csv \
+      --dev_files {datadir}/valid.csv \
+      --test_files {datadir}/test.csv \
+      --alphabet_config_path {datadir}/alphabet.txt \
+      --scorer {datadir}/kenlm.scorer \
+      --checkpoint_dir {datadir}/ckpt \
+      --export_dir {datadir}/models \
+      --log_dir {datadir}/logs \
+      --summary_dir {datadir}/summary \
+      --feature_cache {datadir}/feature_cache \
+      --train_batch_size={batch_size} \
+      --dev_batch_size={batch_size} \
+      --test_batch_size={batch_size} \
+      --early_stop={early_stop} \
+      --epochs={epochs} \
+      --plateau_epochs={plateau_epochs} \
+      --reduce_lr_on_plateau={reduce_lr_on_plateau} \
+      --automatic_mixed_precision=true \
+      --train_cudnn=true \
+      --use_allow_growth=true \
+      --utf8={use_utf8} \
+      --export_file_name={export_file_name}"
